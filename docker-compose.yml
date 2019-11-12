@@ -1,0 +1,48 @@
+version: '3'
+
+networks:
+  laravel:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "9130:9130"
+      - "9110:9110"
+    volumes:
+      - ./code/backend:/backend:z
+      - ./code/frontend:/frontend:z
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:z
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:5.7.22
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql:z
+    environment:
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: homestead
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - laravel
+
+  php:
+    build:
+      context: .
+      dockerfile: phpDockerfile
+    container_name: php
+    volumes:
+      - ./code/backend:/backend:z
+    networks:
+      - laravel
