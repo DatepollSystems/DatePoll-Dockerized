@@ -1,4 +1,4 @@
-read -p "Are you sure you want to install / reinstall DatePoll-Frontend? [y/N] " prompt
+read -p "Are you sure you want to install / update DatePoll-Frontend? [y/N] " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 then
 
