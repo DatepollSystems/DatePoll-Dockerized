@@ -32,7 +32,7 @@ then
 
 	else
 	  
-		echo "> Shuting down docker container"
+		echo "> Shutting down docker container"
 		docker-compose down
 		echo "> Done"
 
