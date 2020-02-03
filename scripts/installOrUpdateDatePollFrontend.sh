@@ -2,10 +2,6 @@ read -p "Are you sure you want to install / update DatePoll-Frontend? [y/N] " pr
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 then
 
-echo "> Removing old installed version..."
-rm -rf ./code/frontend/
-echo "> Done"
-
 echo "> Fetching DatePoll-Frontend zip"
 cd ./code/
 wget https://share.dafnik.me/DatePoll-Frontend-Releases/DatePoll-Frontend-latest.zip
@@ -15,11 +11,15 @@ echo "> Unzipping..."
 unzip DatePoll-Frontend-latest.zip
 echo "> Done"
 
+echo "> Removing old installed version..."
+rm -rf ./frontend/
+echo "> Done"
+
 echo "> Creating frontend folder..."
 mkdir frontend
 echo "> Done"
 
-echo "> Moving files into position..."
+echo "> Moving files into place..."
 mv DatePoll-Frontend/* frontend/
 echo "> Done"
 
