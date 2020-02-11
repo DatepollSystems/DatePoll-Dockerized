@@ -7,6 +7,10 @@ cd ./code/backend/
 git pull
 echo "> Done"
 
+echo "> Setting permissions..."
+chmod -R 777 ./*
+echo "> Done"
+
 echo "> Installing composer libraries..."
 composer install
 echo "> Done"

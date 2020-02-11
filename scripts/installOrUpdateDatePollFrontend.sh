@@ -54,6 +54,10 @@ then
     echo "> Moving files into place..."
     mv DatePoll-Frontend/* frontend/
     echo "> Done"
+    
+    echo "> Setting permissions..."
+    chmod -R 777 ./frontend/
+    echo "> Done"
 
     echo "> Cleaning up..."
     rm -rf DatePoll-Frontend/
