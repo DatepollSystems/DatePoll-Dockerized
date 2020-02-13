@@ -13,13 +13,24 @@ then
 
 	if [ $dockerRound == "0" ]
 	then
+		
+		echo "> Checking if update is needed..."
+		UPSTREAM=${1:-'@{u}'}
+        LOCAL=$(git rev-parse @)
+        REMOTE=$(git rev-parse "$UPSTREAM")
+        BASE=$(git merge-base @ "$UPSTREAM")
 
-		echo "> Fetching new DatePoll-Dockerized"
-		git pull | grep 'test' &> /dev/null
-		if [ $? == 0 ]; then
-			echo "> Nothing to do..."
+        if [ $LOCAL = $REMOTE ]; then
+            echo "> Nothing to do... Bye!"
 			exit 0
-		fi
+        elif [ $LOCAL = $BASE ]; then
+            echo "> Fetching new DatePoll-Dockerized"
+            git pull
+        else
+            echo "> Can not continue! Git repository is out of sync!"
+            exit 0;
+        fi
+        echo "> Done"
 
 		RED='\033[0;31m'
 		NC='\033[0m' # No Color
