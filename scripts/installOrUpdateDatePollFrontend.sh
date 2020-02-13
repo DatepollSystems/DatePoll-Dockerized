@@ -1,4 +1,4 @@
-useReleaseCanditate=false
+version=latest
 
 while getopts ":v:" opt; do
   case $opt in
@@ -7,7 +7,10 @@ while getopts ":v:" opt; do
       if [ "$OPTARG" == "rc" ]
       then
         echo "> Using release candidate..."
-        useReleaseCanditate=true
+        version=rc
+      else
+        echo "> Using dev version..."
+        version=dev
       fi
       ;;
     \?)
@@ -15,7 +18,7 @@ while getopts ":v:" opt; do
       exit 1
       ;;
     :)
-      echo "Option -$OPTARG requires an argument. Example: rc - Release candidate" >&2
+      echo "Option -$OPTARG requires an argument. Example: rc - Release candidate, dev..." >&2
       exit 1
       ;;
   esac
@@ -28,19 +31,11 @@ then
 
     echo "> Fetching DatePoll-Frontend zip"
     cd ./code/
-    if [ "$useReleaseCanditate" = true ] ; then
-        wget https://share.dafnik.me/DatePoll-Frontend-Releases/DatePoll-Frontend-rc.zip
-    else
-        wget https://share.dafnik.me/DatePoll-Frontend-Releases/DatePoll-Frontend-latest.zip
-    fi
+    wget "https://share.dafnik.me/DatePoll-Frontend-Releases/DatePoll-Frontend-${version}.zip"
     echo "> Done"
 
     echo "> Unzipping..."
-    if [ "$useReleaseCanditate" = true ] ; then
-        unzip DatePoll-Frontend-rc.zip
-    else
-        unzip DatePoll-Frontend-latest.zip
-    fi
+    unzip "DatePoll-Frontend-${version}.zip"
     echo "> Done"
 
     echo "> Removing old installed version..."
@@ -61,11 +56,7 @@ then
 
     echo "> Cleaning up..."
     rm -rf DatePoll-Frontend/
-    if [ "$useReleaseCanditate" = true ] ; then
-        rm DatePoll-Frontend-rc.zip
-    else
-        rm DatePoll-Frontend-latest.zip
-    fi
+    rm "DatePoll-Frontend-${version}.zip"
     echo "> Done"
 
 else
