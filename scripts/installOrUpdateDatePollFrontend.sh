@@ -58,6 +58,12 @@ then
     rm -rf DatePoll-Frontend/
     rm "DatePoll-Frontend-${version}.zip"
     echo "> Done"
+    
+    echo "> Restarting docker containers"
+    cd ../
+    docker-compose down
+    docker-compose up -d
+    echo "> Done"
 
 else
   exit 0
