@@ -14,7 +14,7 @@ then
 	if [ $dockerRound == "0" ]
 	then
 		
-		echo "> Checking if update is needed..."
+		echo "> Checking if update is available..."
 		UPSTREAM=${1:-'@{u}'}
         LOCAL=$(git rev-parse @)
         REMOTE=$(git rev-parse "$UPSTREAM")
