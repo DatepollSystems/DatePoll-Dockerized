@@ -26,6 +26,8 @@ then
 
 	echo "> Migrating database..."
 	docker-compose exec php php /backend/artisan migrate
+	## Execute update datepoll db command to set the current application db version into the database
+	docker-compose exec php php /backend/artisan update-datepoll-db
 	echo "> Done"
 
 	read -p "Do you want to add an default admin user? [y/N] " prompt

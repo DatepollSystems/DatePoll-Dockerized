@@ -1,6 +1,7 @@
 read -p "Are you sure you want to upgrade DatePoll-Backend? [y/N] " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 then
+    cd ./code/backend/
 
     echo "> Checking if update is available..."
     UPSTREAM=${1:-'@{u}'}
@@ -12,7 +13,6 @@ then
         echo "> Nothing to do... Bye!"
         exit 0
     elif [ $LOCAL = $BASE ]; then
-        cd ./code/backend/
         echo "> Fetching new DatePoll-Backend"
         git pull
     else
