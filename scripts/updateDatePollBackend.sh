@@ -43,8 +43,8 @@ then
 
     echo "> Migrating database..."
     cd ../../
-    docker-compose exec php php /backend/artisan migrate
-    docker-compose exec php php /backend/artisan update-datepoll-db
+    docker-compose exec datepoll-php php /backend/artisan migrate
+    docker-compose exec datepoll-php php /backend/artisan update-datepoll-db
     echo "> Done"
 
     echo "> Restarting docker container"
