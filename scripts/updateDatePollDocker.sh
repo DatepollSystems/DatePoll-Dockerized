@@ -14,22 +14,9 @@ then
 	if [ $dockerRound == "0" ]
 	then
 		
-		echo "> Checking if update is available..."
-		UPSTREAM=${1:-'@{u}'}
-        LOCAL=$(git rev-parse @)
-        REMOTE=$(git rev-parse "$UPSTREAM")
-        BASE=$(git merge-base @ "$UPSTREAM")
-
-        if [ $LOCAL = $REMOTE ]; then
-            echo "> Nothing to do... Bye!"
-			exit 0
-        elif [ $LOCAL = $BASE ]; then
-            echo "> Fetching new DatePoll-Dockerized"
-            git pull
-        else
-            echo "> Can not continue! Git repository is out of sync!"
-            exit 0;
-        fi
+		echo "> Pulling master"
+		git fetch origin
+		git reset --hard origin/master
         echo "> Done"
 
 		RED='\033[0;31m'

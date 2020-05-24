@@ -3,22 +3,34 @@ if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]
 then
     cd ./code/backend/
 
-    echo "> Checking if update is available..."
-    UPSTREAM=${1:-'@{u}'}
-    LOCAL=$(git rev-parse @)
-    REMOTE=$(git rev-parse "$UPSTREAM")
-    BASE=$(git merge-base @ "$UPSTREAM")
+    echo "> Fetching new version"
 
-    if [ $LOCAL = $REMOTE ]; then
-        echo "> Nothing to do... Bye!"
-        exit 0
-    elif [ $LOCAL = $BASE ]; then
-        echo "> Fetching new DatePoll-Backend"
-        git pull
-    else
-        echo "> Can not continue! Git repository is out of sync!"
-        exit 0;
-    fi
+    while getopts ":v:" opt; do
+	  case $opt in
+	    v)
+	      echo "-v was triggered, Parameter: $OPTARG" >&2
+	      if [ "$OPTARG" == "rl" ]
+	      then
+	        echo "> Fetching rl version..."
+	        git fetch origin
+			git reset --hard origin/master
+	      else
+	        echo "> Fetching dev version..."
+	        git fetch origin
+			git reset --hard origin/development
+	      fi
+	      ;;
+	    \?)
+	      echo "Invalid option: -$OPTARG" >&2
+	      exit 1
+	      ;;
+	    :)
+	      echo "Option -$OPTARG requires an argument. Example: dev - dev, dev..." >&2
+	      exit 1
+	      ;;
+	  esac
+	done
+	
     echo "> Done"
 
     echo "> Setting permissions..."
