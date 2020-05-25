@@ -22,6 +22,10 @@ then
 		RED='\033[0;31m'
 		NC='\033[0m' # No Color
 
+		echo "> Setting executable status on scripts..."
+		chmod +x ./scripts/*
+		echo "> Done"
+
 		echo -e "${NC}> Done. ${RED}Please run this command again, just press Y in the next step! ${NC}"
 
 		echo 1 > ./scripts/dockerRound
