@@ -26,7 +26,7 @@ if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]
 then
     cd ./code/backend/
 
-	if [ version == "master" ]
+	if [ "$version" == "master" ]
 	then
 		echo "> Fetching master branch..."
 	    git fetch origin
