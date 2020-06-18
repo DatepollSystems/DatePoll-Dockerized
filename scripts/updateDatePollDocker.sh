@@ -3,7 +3,7 @@ if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]
 then
 
 	if [ ! -f ./scripts/dockerRound ]; then
-    		echo "> Creating dockerRound file..."
+    	echo "> Creating dockerRound file..."
 		echo 0 > ./scripts/dockerRound
 		echo "> Done..."
 	fi
