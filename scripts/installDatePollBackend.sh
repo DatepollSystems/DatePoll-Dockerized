@@ -7,12 +7,12 @@ then
 	echo "> Done"
 
 	echo "> Fetching DatePoll-Backend"
-	git clone https://gitlab.com/BuergerkorpsEggenburg/datepoll-backend-php.git ./code/backend/
+	git clone https://gitlab.com/DatePoll/datepoll-backend-php.git ./code/backend/
 	echo "> Done"
 
 	echo "> Installing composer libraries..."
 	cd ./code/backend/
-	composer install
+	docker-compose exec datepoll-php php /usr/local/bin/composer install
 	echo "> Done"
 
 	echo "> Copying .env file..."
@@ -21,19 +21,19 @@ then
 
 	echo "> Setting up .env file..."
 	cd ../../
-	docker-compose exec php php /backend/artisan setup-datepoll
+	docker-compose exec datepoll-php php artisan setup-datepoll
 	echo "> Done"
 
 	echo "> Migrating database..."
-	docker-compose exec php php /backend/artisan migrate
+	docker-compose exec datepoll-php php artisan migrate
 	## Execute update datepoll db command to set the current application db version into the database
-	docker-compose exec php php /backend/artisan update-datepoll-db
+	docker-compose exec datepoll-php php artisan update-datepoll-db
 	echo "> Done"
 
 	read -p "Do you want to add an default admin user? [y/N] " prompt
 	if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 	then
-		docker-compose exec php php /backend/artisan add-admin-user
+		docker-compose exec datepoll-php php artisan add-admin-user
 	else
 	  	exit 0
 	fi

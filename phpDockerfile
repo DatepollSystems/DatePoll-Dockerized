@@ -1,9 +1,33 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.3-fpm
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    default-mysql-client \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libmagickwand-dev \
+    libzip-dev \
+    libonig-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    && pecl install imagick
+
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache
+RUN docker-php-ext-enable imagick
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Override with custom opcache settings
 COPY config/phpcustom.ini $PHP_INI_DIR/conf.d/
+
+# Installing composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /backend
+
+RUN chown -R www-data:www-data /backend/
+
+RUN chmod -R 755 /backend/
