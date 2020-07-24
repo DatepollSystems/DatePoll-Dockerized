@@ -1,4 +1,18 @@
-read -p "Are you sure you want to upgrade DatePoll-Dockerized (sudo required)? [y/N] " prompt
+#!/usr/bin/env bash
+
+# Check permissions
+echo -en "Checking for sufficient permissions... "
+if [ "$(id -u)" -ne "0" ]; then
+  echo -e "\e[31mfailed\e[0m"
+  exit 1
+fi
+echo -e "\e[32mOK\e[0m"
+
+for bin in docker-compose docker git; do
+  if [[ -z $(which ${bin}) ]]; then echo "Cannot find ${bin}, exiting..."; exit 1; fi
+done
+
+read -p "Are you sure you want to upgrade DatePoll-Dockerized? [y/N] " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 then
 
@@ -30,7 +44,7 @@ then
 
 		echo 1 > ./scripts/dockerRound
 
-		./scripts/updateDatePollDocker.sh
+		./scripts/dockerUpdate.sh
 
 	else
 	  
@@ -43,12 +57,13 @@ then
 		echo "> Done"
 
 		echo "> Starting docker container"
-		docker-compose up -d
-		echo "> Done. Everything is up to date!"
+		docker-compose up -d --remove-orphans
+		echo "> Finished!"
 
 		echo 0 > ./scripts/dockerRound
 	fi
 
 else
+  echo "bye!"
   exit 0
 fi

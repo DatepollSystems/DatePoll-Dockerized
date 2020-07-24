@@ -1,4 +1,18 @@
+#!/usr/bin/env bash
+
 version=master
+
+# Check permissions
+echo -en "Checking for sufficient permissions... "
+if [ "$(id -u)" -ne "0" ]; then
+  echo -e "\e[31mfailed\e[0m"
+  exit 1
+fi
+echo -e "\e[32mOK\e[0m"
+
+for bin in docker-compose docker git; do
+  if [[ -z $(which ${bin}) ]]; then echo "Cannot find ${bin}, exiting..."; exit 1; fi
+done
 
 while getopts ":v:" opt; do
   case $opt in
@@ -21,7 +35,7 @@ while getopts ":v:" opt; do
   esac
 done
 
-read -p "Are you sure you want to upgrade DatePoll-Backend? [y/N] " prompt
+read -p "Are you sure you want to update DatePoll-Backend? [y/N] " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
 then
     
@@ -50,15 +64,16 @@ then
 
   echo "> Migrating database..."
   cd ../../
-  docker-compose exec datepoll-php php artisan migrate
+  docker-compose exec datepoll-php php artisan migrate --force
   docker-compose exec datepoll-php php artisan update-datepoll-db
   echo "> Done"
 
   echo "> Restarting docker container"
   docker-compose down
   docker-compose up -d
-  echo "> Done"
+  echo "> Finished!"
 
 else
+  echo "bye!"
   exit 0
 fi
