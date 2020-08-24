@@ -31,4 +31,4 @@ WORKDIR /backend
 
 RUN chown -R www-data:www-data /backend/
 
-RUN chmod -R 755 /backend/
+RUN chmod -R 777 /backend/
