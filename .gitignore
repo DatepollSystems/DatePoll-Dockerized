@@ -6,3 +6,5 @@ code/backend/
 mysql/
 
 scripts/dockerRound
+
+redis/

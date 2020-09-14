@@ -41,6 +41,8 @@ services:
   datepoll-redis:
     container_name: datepoll-redis
     image: redis:alpine
+    volumes:
+      - ./redis:/data:z
     networks:
       - laravel
 
