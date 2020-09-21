@@ -22,19 +22,16 @@ services:
       - laravel
 
   datepoll-mysql:
-    image: mysql:5.7.22
+    image: mariadb:latest
     container_name: datepoll-mysql
     restart: unless-stopped
     tty: true
     volumes:
       - ./mysql:/var/lib/mysql:z
     environment:
-      MYSQL_DATABASE: homestead
-      MYSQL_USER: homestead
-      MYSQL_PASSWORD: homestead
-      MYSQL_ROOT_PASSWORD: secret
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      MARIADB_USER: homestead
+      MARIADB_DATABASE: homestead
+      MARIADB_PASSWORD: homestead
     networks:
       - laravel
 
