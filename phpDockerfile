@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagickwand-dev \
     libzip-dev \
     libonig-dev \
+    libc-client-dev \
+    libkrb5-dev \
     locales \
     zip \
     unzip \
@@ -16,7 +18,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     jpegoptim optipng pngquant gifsicle
 
-RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache fileinfo
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
