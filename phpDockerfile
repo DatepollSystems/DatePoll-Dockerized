@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     jpegoptim optipng pngquant gifsicle
 
-RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache fileinfo
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache fileinfo iconv
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
 
