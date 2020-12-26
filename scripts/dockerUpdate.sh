@@ -147,11 +147,7 @@ main () {
 	else
 	
         printf "${BLUE}Rebuilding${NC} docker container"
-<<<<<<< HEAD
         (docker-compose down 2>/dev/null && sudo docker-compose build 2>/dev/null && docker-compose up -d --remove-orphans 2>/dev/null) & spinner $!
-=======
-        (docker-compose down 2>/dev/null && sudo docker-compose build 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
->>>>>>> master
         printf "${GREEN}Successfully${NC} rebuilded docker container [${GREEN}✓${NC}]\n"
         
         printf "${BLUE}Setting${NC} dockerRound file to 0"
