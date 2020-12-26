@@ -182,13 +182,12 @@ main () {
     # Restart docker container network
     printf "${BLUE}Restarting${NC} docker containers..."
     (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
-    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]"
+    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
     
     _success=true
 
-    printf "\n"
     printf "${GREEN}Finished${NC} the frontend update ${BOLD}flawlessly${NC}.\n"
-    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/datepoll-frontend/-/releases${NC} to learn more about the latest updates."
+    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/DatePoll/datepoll-frontend/-/releases${NC} to learn more about the latest updates."
     printf "\n\n"
 }
 
