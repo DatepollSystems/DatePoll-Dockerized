@@ -141,7 +141,7 @@ main () {
         
         printf "${BLUE}Setting${NC} dockerRound file to 1"
         echo 1 > ./scripts/dockerRound & spinner $!
-        printf "${GREEN}Successfully${NC} set update script executable to 1 [${GREEN}✓${NC}]\n"
+        printf "${GREEN}Successfully${NC} set dockerRound file to 1 [${GREEN}✓${NC}]\n"
 
 		./scripts/dockerUpdate.sh -f
 	else
@@ -152,7 +152,7 @@ main () {
         
         printf "${BLUE}Setting${NC} dockerRound file to 0"
         echo 0 > ./scripts/dockerRound & spinner $!
-        printf "${GREEN}Successfully${NC} set update script executable to 0 [${GREEN}✓${NC}]\n"
+        printf "${GREEN}Successfully${NC} set dockerRound file to 0 [${GREEN}✓${NC}]\n"
 
         _success=true
 
