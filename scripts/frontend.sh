@@ -35,6 +35,39 @@ if ! [ "${FRONTEND_INSTALL_DIRECTORY:-}" ]; then
 fi
 INSTALL_TEMP_DIRECTORY="$(pwd)/code/tmp/"
 
+# Activity spinner for background processes.
+spinner() {
+  local -r delay='0.3'
+  local spinstr='\|/-'
+  local temp
+  while ps -p "$1" >> /dev/null; do
+    temp="${spinstr#?}"
+    printf " [${BLUE}%c${NC}]  " "${spinstr}"
+    spinstr=${temp}${spinstr%"${temp}"}
+    sleep "${delay}"
+    printf "\b\b\b\b\b\b"
+  done
+  printf "\r"
+}
+
+# Check for a required tool, or exituccess
+requireTool() {
+  which "$1" >> /dev/null && EC=$? || EC=$?
+  if [ $EC != 0 ]; then
+    errorAndExit "Could not locate \"$1\", which is required for installation."
+  fi
+}
+
+# Check sudo permissions
+checkPermissions() {
+    echo -en "Checking for sufficient permissions... "
+    if [ "$(id -u)" -ne "0" ]; then
+    echo -e "\e[31mfailed\e[0m"
+    errorAndExit "Unsufficient permissions. Sudo required!"
+    fi
+    echo -e "\e[32mOK\e[0m"
+}
+
 # Define version and check args for it
 VERSION=latest
 FORCE=false
@@ -73,39 +106,6 @@ while getopts "v:fh" opt; do
         ;;
     esac
 done
-
-# Activity spinner for background processes.
-spinner() {
-  local -r delay='0.3'
-  local spinstr='\|/-'
-  local temp
-  while ps -p "$1" >> /dev/null; do
-    temp="${spinstr#?}"
-    printf " [${BLUE}%c${NC}]  " "${spinstr}"
-    spinstr=${temp}${spinstr%"${temp}"}
-    sleep "${delay}"
-    printf "\b\b\b\b\b\b"
-  done
-  printf "\r"
-}
-
-# Check for a required tool, or exituccess
-requireTool() {
-  which "$1" >> /dev/null && EC=$? || EC=$?
-  if [ $EC != 0 ]; then
-    errorAndExit "Could not locate \"$1\", which is required for installation."
-  fi
-}
-
-# Check sudo permissions
-checkPermissions() {
-    echo -en "Checking for sufficient permissions... "
-    if [ "$(id -u)" -ne "0" ]; then
-    echo -e "\e[31mfailed\e[0m"
-    errorAndExit "Unsufficient permissions. Sudo required!"
-    fi
-    echo -e "\e[32mOK\e[0m"
-}
 
 main () {
     # Confirm install with user input
@@ -182,13 +182,12 @@ main () {
     # Restart docker container network
     printf "${BLUE}Restarting${NC} docker containers..."
     (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
-    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]"
+    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
     
     _success=true
 
-    printf "\n"
     printf "${GREEN}Finished${NC} the frontend update ${BOLD}flawlessly${NC}.\n"
-    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/datepoll-frontend/-/releases${NC} to learn more about the latest updates."
+    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/DatePoll/datepoll-frontend/-/releases${NC} to learn more about the latest updates."
     printf "\n\n"
 }
 
