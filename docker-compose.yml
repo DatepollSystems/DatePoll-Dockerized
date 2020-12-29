@@ -7,6 +7,7 @@ services:
   datepoll-nginx:
     image: nginx:stable-alpine
     container_name: datepoll-nginx
+    restart: always
     ports:
       - "9130:9130"
       - "9110:9110"
@@ -24,7 +25,7 @@ services:
   datepoll-mysql:
     image: mysql:latest
     container_name: datepoll-mysql
-    restart: unless-stopped
+    restart: always
     tty: true
     volumes:
       - ./mysql:/var/lib/mysql:z
@@ -41,6 +42,7 @@ services:
   datepoll-redis:
     container_name: datepoll-redis
     image: redis:alpine
+    restart: always
     volumes:
       - ./redis:/data:z
     networks:
