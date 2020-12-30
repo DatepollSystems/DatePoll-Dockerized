@@ -2,7 +2,7 @@
 ## Information
 <h4>
     Get notified about updates and join us at
-    <a href="https://discord.gg/wpPDa88">
+    <a href="https://discord.gg/Tc5kAH5zhH">
         <img src="https://img.shields.io/discord/697139052717146123?logo=discord&style=for-the-badge" alt="chat on Discord">
     </a>
 </h4>
