@@ -31,7 +31,7 @@ trap shutdown INT TERM ABRT EXIT
 
 # Define install and tmp folder
 if ! [ "${FRONTEND_INSTALL_DIRECTORY:-}" ]; then
-  FRONTEND_INSTALL_DIRECTORY="$(pwd)/code/frontend"
+  FRONTEND_INSTALL_DIRECTORY="$(pwd)/code/frontend/"
 fi
 INSTALL_TEMP_DIRECTORY="$(pwd)/code/tmp/"
 
@@ -148,7 +148,7 @@ main () {
     
     printf "Using version: ${BOLD}${VERSION}${NC}\n"
     
-    FRONTEND_DOWNLOAD_URL="https://share.dafnik.me/DatePoll-Frontend-Releases/DatePoll-Frontend-${VERSION}.zip"
+    FRONTEND_DOWNLOAD_URL="https://releases.datepoll.org/DatePoll/Frontend-Releases/DatePoll-Frontend-${VERSION}.zip"
     
     printf "${BLUE}Clearing${NC} tmp folder"
     (rm -rf "${INSTALL_TEMP_DIRECTORY}" && mkdir "${INSTALL_TEMP_DIRECTORY}") & spinner $!
@@ -166,12 +166,12 @@ main () {
     
     # Recreate frontend install folder
     printf "${BLUE}Clearing${NC} frontend install folder... "
-    (rm -rf "$FRONTEND_INSTALL_DIRECTORY" 2>/dev/null && mkdir "$FRONTEND_INSTALL_DIRECTORY" 2>/dev/null) & spinner $!
+    (rm -rf "$FRONTEND_INSTALL_DIRECTORY" && mkdir "$FRONTEND_INSTALL_DIRECTORY") & spinner $!
     printf "${GREEN}Successfully${NC} cleared frontend install folder [${GREEN}✓${NC}]\n"
     
     # Move files into place
     printf "${BLUE}Moving${NC} files into place... "
-    mv "${INSTALL_TEMP_DIRECTORY}/DatePoll-Frontend/" "${FRONTEND_INSTALL_DIRECTORY}/*" 2>/dev/null & spinner $!
+    mv ./code/tmp/DatePoll-Frontend/* ./code/frontend/ & spinner $!
     printf "${GREEN}Successfully${NC} moved files into place [${GREEN}✓${NC}]\n"
     
     # Set 777 permissions
