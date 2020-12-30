@@ -1,79 +1,179 @@
 #!/usr/bin/env bash
 
-version=master
+set -o errexit
+set -o nounset
+set -o pipefail
 
-# Check permissions
-echo -en "Checking for sufficient permissions... "
-if [ "$(id -u)" -ne "0" ]; then
-  echo -e "\e[31mfailed\e[0m"
-  exit 1
-fi
-echo -e "\e[32mOK\e[0m"
+# Formatting escape codes.
+RED='\033[0;31m'
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+BOLD='\033[1m'
+UNDERLINE='\033[4m'
+NC='\033[0m' # No Color
 
-for bin in docker-compose docker git; do
-  if [[ -z $(which ${bin}) ]]; then echo "Cannot find ${bin}, exiting..."; exit 1; fi
+# Print an error message and exit the program.
+errorAndExit() {
+  printf "\n${RED}ERROR:${NC} %s\n" "$1"
+  exit 1;
+}
+
+# Set up an exit handler so we can print a help message on failures.
+_success=false
+shutdown () {
+  if [ $_success = false ]; then
+    printf "\nYour DatePoll backend update did not complete successfully.\n"
+    printf "Please report your issue at https://gitlab.com/DatePoll/DatePoll/DatePoll-Backend-PHP/issues\n\n"
+  fi
+}
+trap shutdown INT TERM ABRT EXIT
+
+# Activity spinner for background processes.
+spinner() {
+  local -r delay='0.3'
+  local spinstr='\|/-'
+  local temp
+  while ps -p "$1" >> /dev/null; do
+    temp="${spinstr#?}"
+    printf " [${BLUE}%c${NC}]  " "${spinstr}"
+    spinstr=${temp}${spinstr%"${temp}"}
+    sleep "${delay}"
+    printf "\b\b\b\b\b\b"
+  done
+  printf "\r"
+}
+
+# Check for a required tool, or exituccess
+requireTool() {
+  which "$1" >> /dev/null && EC=$? || EC=$?
+  if [ $EC != 0 ]; then
+    errorAndExit "Could not locate \"$1\", which is required for installation."
+  fi
+}
+
+# Check sudo permissions
+checkPermissions() {
+    echo -en "Checking for sufficient permissions... "
+    if [ "$(id -u)" -ne "0" ]; then
+    echo -e "\e[31mfailed\e[0m"
+    errorAndExit "Unsufficient permissions. Sudo required!"
+    fi
+    echo -e "\e[32mOK\e[0m"
+}
+
+# Define version and check args for it
+VERSION=latest
+FORCE=false
+
+while getopts "v:fh" opt; do        
+    case "${opt}" in
+        h)
+            printf "${BOLD}DatePoll-Backend update help${NC}:\n"
+            printf "Usage: ./code/backendUpdate.sh -v [version] -f\n"
+            printf "    -v ['dev', 'rc']    (optional) selects a specific version to install\n"
+            printf "    -f                  (optional) force updates DatePoll-Backend without asking for confirmation\n"
+            _success=true
+            exit 1;
+        ;;
+        f)
+            echo "-f was triggered, force install..."
+            FORCE=true
+        ;;
+        v)
+            echo "-v was triggered, Parameter: $OPTARG" >&2
+            if [ "$OPTARG" == "rc" ]
+            then
+                VERSION=rc
+            elif [ "$OPTARG" == "dev" ]
+            then
+                VERSION=dev
+            else
+                errorAndExit "Option -v $OPTARG argument incorrect. Please use: rc - Release candidate or dev - development version" 
+            fi
+        ;;
+        \?)
+            errorAndExit "Option -v $OPTARG argument incorrect. Please use: rc - Release candidate or dev - development version" 
+        ;;
+        :)
+            errorAndExit "Option -v $OPTARG requires an argument. Examples: rc - Release candidate, dev - development version" 
+        ;;
+    esac
 done
 
-while getopts ":v:" opt; do
-  case $opt in
-    v)
-      echo "-v was triggered, Parameter: $OPTARG" >&2
-      if [ "$OPTARG" == "dev" ]
-      then
-        echo "> Using dev version..."
-        version=dev
-      fi
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument. Example: dev - dev version" >&2
-      exit 1
-      ;;
-  esac
-done
-
-read -p "Are you sure you want to update DatePoll-Backend? [y/N] " prompt
-if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
-then
+main () {
+    # Confirm install with user input
+    if [ $FORCE == false ]; then
+        read -p "Are you sure you want to update DatePoll-Backend? [y/N] " prompt
+        if [[ $prompt != "y" && $prompt != "Y" && $prompt != "yes" && $prompt != "Yes" ]]
+        then
+            _success=true
+            errorAndExit "User aborted. Next time press ['y', 'Y', 'yes', 'Yes'] to continue"
+        fi
+    fi
     
-  cd ./code/backend/
+    # Check for sufficient permissions
+    checkPermissions
+    
+    # Check if required tools are installed
+    requireTool "docker-compose"
+    requireTool "docker"
+    requireTool "git"
+    
+     # Determine operating system & architecture (and exit if not supported)
+    case $(uname -s) in
+        "Linux")
+        case "$(uname -m)" in
+        "x86_64")
+            ;;
+        *)
+            errorAndExit "Unsupported CPU architecture $(uname -m)"
+            ;;
+        esac
+        ;;
+        *)
+        errorAndExit "Unsupported operating system $(uname -s)"
+        ;;
+    esac
+    
+    printf "Using version: ${BOLD}${VERSION}${NC}\n"
+    
+    cd ./code/backend/
 
-	if [ "$version" == "master" ]
-  then
-		echo "> Fetching master branch..."
-	  git fetch origin
-		git reset --hard origin/master
-	else
-    echo "> Fetching development version..."
-	  git fetch origin
-		git reset --hard origin/development
-	fi
-	
-  echo "> Done"
+    # Download release
+    printf "${BLUE}Pulling${NC} DatePoll-Backend-${VERSION}"
+    if [ "$version" == "master" ]
+    then
+      (git fetch origin 2>/dev/null && git reset --hard origin/master 2>/dev/null) & spinner $!
+    else
+      (git fetch origin 2>/dev/null && git reset --hard origin/development 2>/dev/null) & spinner $!
+    fi    
+    printf "${GREEN}Successfully${NC} pulled DatePoll-Backend-${VERSION} [${GREEN}✓${NC}]\n"
+    
+    # Set 777 permissions
+    printf "${BLUE}Applying${NC} permissions... "
+    chmod -R 777 ./* 2>/dev/null & spinner $!
+    printf "${GREEN}Successfully${NC} applied permissions [${GREEN}✓${NC}]\n"
 
-  echo "> Setting permissions..."
-  chmod -R 777 ./*
-  echo "> Done"
+    # Updating composer libraries
+    printf "${BLUE}Updating${NC} composer libraries \n"
+    docker-compose exec datepoll-php php /usr/local/bin/composer install
+    printf "\n${GREEN}Successfully${NC} updated composer libraries [${GREEN}✓${NC}]\n"
+    
+    # Recreate frontend install folder
+    printf "${BLUE}Migrating${NC} database... \n"
+    (docker-compose exec datepoll-php php artisan migrate --force && docker-compose exec datepoll-php php artisan update-datepoll-db)
+    printf "\n${GREEN}Successfully${NC} run database migrations [${GREEN}✓${NC}]\n"
+       
+    # Restart docker container network
+    printf "${BLUE}Restarting${NC} docker containers..."
+    (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
+    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
+    
+    _success=true
 
-  echo "> Installing composer libraries..."
-  docker-compose exec datepoll-php php /usr/local/bin/composer install
-  echo "> Done"
+    printf "${GREEN}Finished${NC} the backend update ${BOLD}flawlessly${NC}.\n"
+    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/DatePoll/datepoll-backend-php/-/releases${NC} or ${UNDERLINE}https://docs.datepoll.org/DatePoll/update to learn more about the latest updates."
+    printf "\n\n"
+}
 
-  echo "> Migrating database..."
-  cd ../../
-  docker-compose exec datepoll-php php artisan migrate --force
-  docker-compose exec datepoll-php php artisan update-datepoll-db
-  echo "> Done"
-
-  echo "> Restarting docker container"
-  docker-compose down
-  docker-compose up -d
-  echo "> Finished!"
-
-else
-  echo "bye!"
-  exit 0
-fi
+main

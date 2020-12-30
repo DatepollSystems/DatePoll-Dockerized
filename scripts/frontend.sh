@@ -23,7 +23,7 @@ _success=false
 shutdown () {
   if [ $_success = false ]; then
     printf "\nYour DatePoll frontend installation did not complete successfully.\n"
-    printf "Please report your issue at https://github.com/DatePoll/DatePoll/DatePoll-Frontend/issues\n\n"
+    printf "Please report your issue at https://gitlab.com/DatePoll/DatePoll/DatePoll-Frontend/issues\n\n"
   fi
   rm -rf "$INSTALL_TEMP_DIRECTORY"
 }
