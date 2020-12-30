@@ -141,7 +141,7 @@ main () {
 
     # Download release
     printf "${BLUE}Pulling${NC} DatePoll-Backend-${VERSION}"
-    if [ "$version" == "master" ]
+    if [ "$VERSION" == "latest" ]
     then
       (git fetch origin 2>/dev/null && git reset --hard origin/master 2>/dev/null) & spinner $!
     else

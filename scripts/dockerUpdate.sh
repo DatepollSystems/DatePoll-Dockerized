@@ -23,7 +23,7 @@ _success=false
 shutdown () {
   if [ $_success = false ]; then
     printf "\nYour DatePoll Dockerized update did not complete successfully.\n"
-    printf "Please report your issue at https://github.com/DatePoll/DatePoll/DatePoll-Dockerized/issues\n\n"
+    printf "Please report your issue at https://gitlab.com/DatePoll/DatePoll/DatePoll-Dockerized/issues\n\n"
   fi
 }
 trap shutdown INT TERM ABRT EXIT
