@@ -88,7 +88,7 @@ done
 main () {
     # Confirm install with user input
     if [ $FORCE == false ]; then
-        read -p "Are you sure you want to install / update DatePoll-Frontend? [y/N] " prompt
+        read -p "Are you sure you want to update DatePoll-Dockerized? [y/N] " prompt
         if [[ $prompt != "y" && $prompt != "Y" && $prompt != "yes" && $prompt != "Yes" ]]
         then
             _success=true
@@ -146,9 +146,9 @@ main () {
 		./scripts/dockerUpdate.sh -f
 	else
 	
-        printf "${BLUE}Rebuilding${NC} docker container"
-        (docker-compose down 2>/dev/null && sudo docker-compose build 2>/dev/null && docker-compose up -d --remove-orphans 2>/dev/null) & spinner $!
-        printf "${GREEN}Successfully${NC} rebuilded docker container [${GREEN}✓${NC}]\n"
+        printf "${BLUE}Rebuilding${NC} docker container\n"
+        docker-compose down && sudo docker-compose build && docker-compose up -d --remove-orphans
+        printf "\n${GREEN}Successfully${NC} rebuilded docker container [${GREEN}✓${NC}]\n"
         
         printf "${BLUE}Setting${NC} dockerRound file to 0"
         echo 0 > ./scripts/dockerRound & spinner $!

@@ -156,7 +156,7 @@ main () {
 
     # Updating composer libraries
     printf "${BLUE}Updating${NC} composer libraries \n"
-    docker-compose exec datepoll-php php /usr/local/bin/composer install
+    docker-compose exec datepoll-php php /usr/local/bin/composer install --ignore-platform-reqs
     printf "\n${GREEN}Successfully${NC} updated composer libraries [${GREEN}✓${NC}]\n"
     
     # Recreate frontend install folder
@@ -165,9 +165,9 @@ main () {
     printf "\n${GREEN}Successfully${NC} run database migrations [${GREEN}✓${NC}]\n"
        
     # Restart docker container network
-    printf "${BLUE}Restarting${NC} docker containers..."
-    (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
-    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
+    printf "${BLUE}Restarting${NC} docker containers...\n"
+    docker-compose down && docker-compose up -d
+    printf "\n${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
     
     _success=true
 

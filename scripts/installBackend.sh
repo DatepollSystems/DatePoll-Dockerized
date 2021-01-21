@@ -30,7 +30,7 @@ then
 	echo "> Done"
 
 	echo "> Installing composer libraries..."
-	docker-compose exec datepoll-php php /usr/local/bin/composer install
+	docker-compose exec datepoll-php php /usr/local/bin/composer install --ignore-platform-reqs
 	echo "> Done"
 
 	echo "> Copying .env file..."
