@@ -172,7 +172,7 @@ main () {
     _success=true
 
     printf "${GREEN}Finished${NC} the backend update ${BOLD}flawlessly${NC}.\n"
-    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/DatePoll/datepoll-backend-php/-/releases${NC} or ${UNDERLINE}https://docs.datepoll.org/DatePoll/update to learn more about the latest updates.${NC}"
+    printf "Visit ${UNDERLINE}https://gitlab.com/DatePoll/DatePoll/datepoll-backend-php/-/releases${NC} or ${UNDERLINE}https://datepoll.org/docs/DatePoll/update${NC} to learn more about the latest updates.${NC}"
     printf "\n\n"
 }
 
