@@ -140,14 +140,15 @@ main () {
     cd ./code/backend/
 
     # Download release
-    printf "${BLUE}Pulling${NC} DatePoll-Backend-${VERSION}"
+    printf "${BLUE}Pulling${NC} DatePoll-Backend-${VERSION}\n"
+    git fetch origin
     if [ "$VERSION" == "latest" ]
     then
-      (git fetch origin 2>/dev/null && git reset --hard origin/master 2>/dev/null) & spinner $!
+      git reset --hard origin/master
     else
-      (git fetch origin 2>/dev/null && git reset --hard origin/development 2>/dev/null) & spinner $!
+      git reset --hard origin/development
     fi    
-    printf "${GREEN}Successfully${NC} pulled DatePoll-Backend-${VERSION} [${GREEN}✓${NC}]\n"
+    printf "\n${GREEN}Successfully${NC} pulled DatePoll-Backend-${VERSION} [${GREEN}✓${NC}]\n"
     
     # Set 777 permissions
     printf "${BLUE}Applying${NC} permissions... "
@@ -159,15 +160,15 @@ main () {
     docker-compose exec datepoll-php php /usr/local/bin/composer install --ignore-platform-reqs
     printf "\n${GREEN}Successfully${NC} updated composer libraries [${GREEN}✓${NC}]\n"
     
-    # Recreate frontend install folder
+    # Run database migrations
     printf "${BLUE}Migrating${NC} database... \n"
     (docker-compose exec datepoll-php php artisan migrate --force && docker-compose exec datepoll-php php artisan update-datepoll-db)
     printf "\n${GREEN}Successfully${NC} run database migrations [${GREEN}✓${NC}]\n"
        
     # Restart docker container network
-    printf "${BLUE}Restarting${NC} docker containers...\n"
-    docker-compose down && docker-compose up -d
-    printf "\n${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
+    printf "${BLUE}Restarting${NC} docker containers..."
+    (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
+    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
     
     _success=true
 
