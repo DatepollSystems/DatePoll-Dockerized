@@ -12,11 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libc-client-dev \
     libkrb5-dev \
     locales \
-    zip \
-    unzip \
+    zip unzip\
     git \
     supervisor \
-    jpegoptim optipng pngquant gifsicle
+    jpegoptim optipng pngquant gifsicle && apt-get clean
 
 RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath opcache fileinfo iconv
 
