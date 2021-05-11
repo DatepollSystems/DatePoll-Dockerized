@@ -10,3 +10,5 @@ scripts/dockerRound
 redis/
 
 code/tmp/
+
+maintance/contact.json

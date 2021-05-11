@@ -1,28 +1,96 @@
 <!doctype html>
+<header>
 <title>Maintance</title>
-<meta charset="utf-8"/>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="robots" content="noindex"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Community management application." />
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="DatePoll"/>
+  <meta property="og:description" content="Community management application."/>
+  <meta property="og:image" content="favicon.png"/>
+
+<!-- Tell google chrome not to translate this site -->
+<meta name="google" content="notranslate" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+
 <style>
   body { text-align: center; padding: 150px; }
   h1 { font-size: 50px; }
   body { font: 20px Helvetica, sans-serif; color: #333; }
   article { display: block; text-align: left; width: 650px; margin: 0 auto; }
   a { color: #dc8100; text-decoration: none; }
-  a:hover { color: #333; text-decoration: none; }
+  a:hover { color: #f69000; text-decoration: underline; }
+  .jsShow { display: none; }
 </style>
+</header>
+<body>
+  <article>
+      <h1>Hi! Your DatePoll instance is currently under maintance.</h1>
+      <div>
+          <p>We apologize for any inconvenience, in the mean time you could enjoy the beautiful day or our beautitful <a href="https://datepollsystems.org" rel="noopener" target="_blank">website</a>. We will be back!</p>
+      </div>
+      <div>
+        Contact: <a href="#" rel="noopener" id="contactEmail">Not set</a>
+      </div>
+  </article>
 
-<article>
-    <h1>Hi! Your DatePoll instance is currently under maintance.</h1>
-    <div>
-        <p>We apologize for any inconvenience, in the mean time you could enjoy the beautiful day. We will be back!</p>
-    </div>
-</article>
+  <article style="margin-top: 200px;">
+      <h5>You are the server administrator and you are not applying an update?</h5>
+      <div>
+          <small>Go into your local DatePoll dockerized folder and execute the following command:</small>
+      </div>
+      <div>
+          <input type="text" value="docker-compose up -d" id="myInput" readonly style="font-size: 25px;">
+          <button onclick="copyToClipboard()" id="myCopyButton1" class="jsShow">Copy</button>
+      </div>
+  </article>
 
-<article style="margin-top: 200px;">
-    <h5>You are the server administrator and you are not applying an update?</h5>
-    <div>
-        <small>Go into your local DatePoll dockerized folder and execute the following command:</small>
-        <code>docker-compose up -d</code>
-    </div>
-</article>
+  <noscript>
+  <div style="margin-top: 50px;">Javascript would be needed for some extra stuff to work. Nonetheless, you're welcome.</div>
+  </noscript>
+
+  <script>
+    let hiddenElementsToShow = document.getElementsByClassName("jsShow");
+    for (let i = 0; i < hiddenElementsToShow.length; i++) {
+      hiddenElementsToShow[i].style.display = "inline";
+    }
+    
+    loadJSON(function(response) {
+        if (response == null) {
+        } else {
+          var contact = JSON.parse(response);
+          document.getElementById("contactEmail").href = contact.email
+        }
+    });
+    
+     function loadJSON(callback) {   
+        var xobj = new XMLHttpRequest();
+            xobj.overrideMimeType("application/json");
+        xobj.open('GET', 'contact.json', true);
+        xobj.onreadystatechange = function () {
+              if (xobj.readyState == 4 && xobj.status == "200") {
+                callback(xobj.responseText);
+              }
+        };
+        xobj.send(null);  
+    }
+
+    function copyToClipboard() {
+      var copyText = document.getElementById("myInput");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999)
+      document.execCommand("copy");
+      document.getElementById("myCopyButton1").innerHTML = "Copied!"
+      window.setTimeout( function() {
+        document.getElementById("myCopyButton1").innerHTML = "Copy"
+      }, 3 * 1000 );
+    }
+  </script>
+</body>
