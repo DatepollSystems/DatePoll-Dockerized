@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Community management application." />
 
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="DatePoll"/>
-  <meta property="og:description" content="Community management application."/>
-  <meta property="og:image" content="favicon.png"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="DatePoll"/>
+<meta property="og:description" content="Community management application."/>
+<meta property="og:image" content="favicon.png"/>
 
 <!-- Tell google chrome not to translate this site -->
 <meta name="google" content="notranslate" />
@@ -36,7 +36,7 @@
       <div>
           <p>We apologize for any inconvenience, in the mean time you could enjoy the beautiful day or our beautitful <a href="https://datepollsystems.org" rel="noopener" target="_blank">website</a>. We will be back!</p>
       </div>
-      <div>
+      <div class="jsShow">
         Contact: <a href="#" rel="noopener" id="contactEmail">Not set</a>
       </div>
   </article>
@@ -53,7 +53,7 @@
   </article>
 
   <noscript>
-  <div style="margin-top: 50px;">Javascript would be needed for some extra stuff to work. Nonetheless, you're welcome.</div>
+    <div style="margin-top: 50px;">Javascript would be needed to load contact information and make some other low-level stuff work. Nonetheless, you're welcome.</div>
   </noscript>
 
   <script>
@@ -62,16 +62,15 @@
       hiddenElementsToShow[i].style.display = "inline";
     }
     
-    loadJSON(function(response) {
-        if (response == null) {
-        } else {
+    loadContact(function(response) {
+        if (response != null) {
           var contact = JSON.parse(response);
           document.getElementById("contactEmail").href = "mailto:" + contact.email;
           document.getElementById("contactEmail").innerHTML = contact.email;
         }
     });
     
-     function loadJSON(callback) {   
+     function loadContact(callback) {   
         var xobj = new XMLHttpRequest();
             xobj.overrideMimeType("application/json");
         xobj.open('GET', 'contact.json', true);
