@@ -68,12 +68,12 @@ while getopts "v:fh" opt; do
         h)
             printf "${BOLD}DatePoll-Dockerized update help${NC}:\n"
             printf "Usage: ./code/dockerUpdate.sh -f\n"
-            printf "    -f                  (optional) force install DatePoll-Frontend without asking for confirmation\n"
+            printf "    -f                  (optional) force update DatePoll-Dockerized without asking for confirmation\n"
             _success=true
             exit 1;
         ;;
         f)
-            echo "-f was triggered, force install..."
+            echo "-f was triggered, force update..."
             FORCE=true
         ;;
         \?)
@@ -86,7 +86,7 @@ while getopts "v:fh" opt; do
 done
 
 main () {
-    # Confirm install with user input
+    # Confirm update with user input
     if [ $FORCE == false ]; then
         read -p "Are you sure you want to update DatePoll-Dockerized? [y/N] " prompt
         if [[ $prompt != "y" && $prompt != "Y" && $prompt != "yes" && $prompt != "Yes" ]]
@@ -103,6 +103,8 @@ main () {
     requireTool "docker-compose"
     requireTool "docker"
     requireTool "git"
+    requireTool "chmod"
+    requireTool "echo"
     
     # Determine operating system & architecture (and exit if not supported)
     case $(uname -s) in

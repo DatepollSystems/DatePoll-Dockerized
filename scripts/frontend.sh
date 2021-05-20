@@ -23,7 +23,7 @@ _success=false
 shutdown () {
   if [ $_success = false ]; then
     printf "\nYour DatePoll frontend installation did not complete successfully.\n"
-    printf "Please report your issue at https://gitlab.com/DatePoll/DatePoll/DatePoll-Frontend/issues\n\n"
+    printf "Please report your issue at https://gitlab.com/DatePoll/DatePoll/DatePoll-Dockerized/issues\n\n"
   fi
   rm -rf "$INSTALL_TEMP_DIRECTORY"
 }
@@ -71,20 +71,26 @@ checkPermissions() {
 # Define version and check args for it
 VERSION=latest
 FORCE=false
+SKIP_CONTAINER_RESTART=false
 
-while getopts "v:fh" opt; do        
+while getopts "v:fsh" opt; do        
     case "${opt}" in
         h)
             printf "${BOLD}DatePoll-Frontend install help${NC}:\n"
             printf "Usage: ./code/frontend.sh -v [version] -f\n"
             printf "    -v ['dev', 'rc']    (optional) selects a specific version to install\n"
             printf "    -f                  (optional) force install DatePoll-Frontend without asking for confirmation\n"
+            printf "    -s                  (optional) skip container restart\n"
             _success=true
             exit 1;
         ;;
         f)
             echo "-f was triggered, force install..."
             FORCE=true
+        ;;
+        s)
+            echo "-s was triggered, skip container restart..."
+            SKIP_CONTAINER_RESTART=true
         ;;
         v)
             echo "-v was triggered, Parameter: $OPTARG" >&2
@@ -123,6 +129,8 @@ main () {
     
     # Check if required tools are installed
     requireTool "curl"
+    requireTool "mkdir"
+    requireTool "chmod"
     requireTool "mv"
     requireTool "rm"
     requireTool "unzip"
@@ -180,9 +188,11 @@ main () {
     printf "${GREEN}Successfully${NC} applied permissions [${GREEN}✓${NC}]\n"
     
     # Restart docker container network
-    printf "${BLUE}Restarting${NC} docker containers..."
-    (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
-    printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
+    if [ $SKIP_CONTAINER_RESTART == false ]; then
+      printf "${BLUE}Restarting${NC} docker containers..."
+      (docker-compose down 2>/dev/null && docker-compose up -d 2>/dev/null) & spinner $!
+      printf "${GREEN}Successfully${NC} restarted docker container [${GREEN}✓${NC}]\n"
+    fi
     
     _success=true
 
